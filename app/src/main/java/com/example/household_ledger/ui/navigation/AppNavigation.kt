@@ -15,7 +15,6 @@ import com.example.household_ledger.ui.calendar.CalendarScreen
 import com.example.household_ledger.ui.components.BottomNavBar
 import com.example.household_ledger.ui.home.HomeScreen
 import com.example.household_ledger.ui.inbox.InboxScreen
-import com.example.household_ledger.ui.point.PointWalletScreen
 import com.example.household_ledger.ui.settings.SettingsScreen
 import com.example.household_ledger.ui.stats.StatsScreen
 import com.example.household_ledger.ui.transaction.AddEditTransactionScreen
@@ -29,7 +28,6 @@ object Routes {
     const val ADD_TRANSACTION = "add_transaction"
     const val ADD_TRANSACTION_WITH_DATE = "add_transaction/{year}/{month}/{day}"
     const val EDIT_TRANSACTION = "edit_transaction/{transactionId}"
-    const val POINT_WALLET = "point_wallet"
 }
 
 @Composable
@@ -67,7 +65,6 @@ fun AppNavigation() {
                 HomeScreen(
                     onNavigateToInbox = { navController.navigate(Routes.INBOX) },
                     onNavigateToAddTransaction = { navController.navigate(Routes.ADD_TRANSACTION) },
-                    onNavigateToPointWallet = { navController.navigate(Routes.POINT_WALLET) },
                     onNavigateToEditTransaction = { id -> navController.navigate("edit_transaction/$id") }
                 )
             }
@@ -123,11 +120,6 @@ fun AppNavigation() {
                 AddEditTransactionScreen(
                     onNavigateBack = { navController.popBackStack() },
                     editTransactionId = transactionId
-                )
-            }
-            composable(Routes.POINT_WALLET) {
-                PointWalletScreen(
-                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }
