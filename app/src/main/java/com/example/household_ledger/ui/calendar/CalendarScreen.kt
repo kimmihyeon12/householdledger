@@ -28,7 +28,6 @@ import com.example.household_ledger.data.mock.MockData
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.TrendingDown
 import androidx.compose.material.icons.outlined.TrendingUp
-import com.example.household_ledger.model.Transaction
 import com.example.household_ledger.model.TransactionState
 import com.example.household_ledger.model.TransactionType
 import com.example.household_ledger.ui.components.TransactionItem
@@ -65,7 +64,7 @@ fun CalendarScreen(
                     Text(
                         "캘린더",
                         fontWeight = FontWeight.Bold,
-                        color = Navy900
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -73,7 +72,7 @@ fun CalendarScreen(
                 )
             )
         },
-        containerColor = SurfaceDim
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -223,7 +222,7 @@ fun CalendarScreen(
                                     Text(
                                         "${currentMonth}월 ${if (isExpense) "지출" else "수입"} 내역이 없습니다",
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = Navy400
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             } else {
@@ -302,7 +301,7 @@ fun CalendarScreen(
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 20.dp),
                             thickness = 0.5.dp,
-                            color = Navy200.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                         )
                     }
                 }
@@ -333,12 +332,12 @@ private fun MonthHeader(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Navy100)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Icon(
                 Icons.Default.ChevronLeft,
                 contentDescription = "이전 달",
-                tint = Navy700
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -346,14 +345,14 @@ private fun MonthHeader(
             Text(
                 text = "${year}년",
                 style = MaterialTheme.typography.labelMedium,
-                color = Navy400,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = "${month}월",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = Navy900
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -362,12 +361,12 @@ private fun MonthHeader(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Navy100)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = "다음 달",
-                tint = Navy700
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -438,10 +437,10 @@ private fun CalendarGrid(
         modifier = Modifier
             .padding(horizontal = 12.dp)
             .clip(RoundedCornerShape(24.dp))
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .border(
                 width = 1.dp,
-                color = Navy200.copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(24.dp)
             )
             .padding(12.dp)
@@ -460,7 +459,7 @@ private fun CalendarGrid(
                     color = when (index) {
                         0 -> ExpenseRed.copy(alpha = 0.55f)
                         6 -> IncomeBlue.copy(alpha = 0.55f)
-                        else -> Navy400
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
                     }
                 )
             }
@@ -560,10 +559,10 @@ private fun CalendarDayCell(
                 },
                 color = when {
                     isToday -> Color.White
-                    isSelected -> Navy900
+                    isSelected -> MaterialTheme.colorScheme.onSurface
                     isSunday -> ExpenseRed.copy(alpha = 0.65f)
                     isSaturday -> IncomeBlue.copy(alpha = 0.65f)
-                    else -> Navy800
+                    else -> MaterialTheme.colorScheme.onSurface
                 }
             )
         }
@@ -631,10 +630,10 @@ private fun DayDetailHeader(
             .clip(RoundedCornerShape(24.dp))
             .border(
                 width = 1.dp,
-                color = Navy200.copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(24.dp)
             )
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         // Left accent bar
         Box(
@@ -666,14 +665,14 @@ private fun DayDetailHeader(
                     text = "${month}월 ${day}일 (${dayOfWeek})",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Navy900
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 IconButton(
                     onClick = onAddTransaction,
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(GoldLight)
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
                 ) {
                     Icon(
                         Icons.Default.Add,
@@ -727,13 +726,13 @@ private fun EmptyDayState(
                 Icons.Default.EventBusy,
                 contentDescription = null,
                 modifier = Modifier.size(36.dp),
-                tint = Navy400.copy(alpha = 0.5f)
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 "이 날은 거래가 없어요",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Navy400,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -741,7 +740,7 @@ private fun EmptyDayState(
                 onClick = onAddTransaction,
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = GoldLight,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = GoldPrimary
                 )
             ) {

@@ -103,7 +103,7 @@ fun InboxScreen(
                         "모든 거래를 확인했어요!",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Medium,
-                        color = Navy400
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -125,7 +125,7 @@ fun InboxScreen(
                         Text(
                             text = "대기 중 총액",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Navy400
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
@@ -189,13 +189,13 @@ private fun CandidateCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Pill-shaped status badge - unified color scheme
+                // Pill-shaped status badge
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
                         .background(
-                            if (isCancelCandidate) Navy200.copy(alpha = 0.6f)
-                            else GoldLight
+                            if (isCancelCandidate) MaterialTheme.colorScheme.surfaceVariant
+                            else MaterialTheme.colorScheme.secondaryContainer
                         )
                         .padding(horizontal = 10.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -206,20 +206,20 @@ private fun CandidateCard(
                         else Icons.Outlined.AutoAwesome,
                         contentDescription = null,
                         modifier = Modifier.size(13.dp),
-                        tint = if (isCancelCandidate) Navy600 else GoldPrimary
+                        tint = if (isCancelCandidate) MaterialTheme.colorScheme.onSurfaceVariant else GoldPrimary
                     )
                     Text(
                         text = if (isCancelCandidate) "취소 후보" else "자동 수집",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
-                        color = if (isCancelCandidate) Navy600 else GoldDark
+                        color = if (isCancelCandidate) MaterialTheme.colorScheme.onSurfaceVariant else GoldPrimary
                     )
                 }
 
                 Text(
                     text = "${candidate.channel} · ${dateFormat.format(Date(candidate.occurredAt))}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Navy400
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -239,7 +239,8 @@ private fun CandidateCard(
                 text = "-${numberFormat.format(candidate.amount)}원",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = if (isCancelCandidate) Navy400 else Navy900
+                color = if (isCancelCandidate) MaterialTheme.colorScheme.onSurfaceVariant
+                else MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -253,7 +254,7 @@ private fun CandidateCard(
                 Text(
                     text = "신뢰도",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Navy400
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 LinearProgressIndicator(
                     progress = { candidate.confidence },
@@ -265,13 +266,13 @@ private fun CandidateCard(
                         confidencePercent >= 80 -> GoldPrimary
                         else -> GoldPrimary.copy(alpha = 0.45f)
                     },
-                    trackColor = Navy200.copy(alpha = 0.5f),
+                    trackColor = MaterialTheme.colorScheme.outlineVariant,
                 )
                 Text(
                     text = "${confidencePercent}%",
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium,
-                    color = Navy600
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -288,9 +289,9 @@ private fun CandidateCard(
                     onClick = onDelete,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Navy200),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Navy600
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 ) {
                     Icon(
