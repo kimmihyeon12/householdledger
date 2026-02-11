@@ -99,7 +99,7 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "AutoLedger",
+                        text = "콩돈",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                             letterSpacing = (-0.5).sp
