@@ -125,8 +125,8 @@ docs: CLAUDE.md 로그인 관련 문서 추가
 
 | 기능 | 설명 | 주요 파일 |
 |------|------|-----------|
-| 홈 화면 | 월별 요약 카드 (예산/수입/지출/잔액), AI 자연어 거래 입력, 최근 거래 목록 | `ui/home/HomeScreen.kt` |
-| 월별 예산 관리 | SharedPreferences 기반 월별 예산 설정, 잔액 = 예산 - 지출 | `data/budget/BudgetPreferences.kt` |
+| 홈 화면 | 월별 요약 카드 (수입/지출/잔액), 헤더에 예산 칩, AI 자연어 거래 입력, 최근 거래 목록 | `ui/home/HomeScreen.kt` |
+| 월별 예산 관리 | SharedPreferences 기반 월별 예산 설정, 잔액 = 예산 - 지출, 요약 카드 헤더의 칩으로 설정/표시 | `data/budget/BudgetPreferences.kt` |
 | 거래 추가/수정 | 수입/지출 타입, 금액, 가맹점, 카테고리, 메모 입력 | `ui/transaction/AddEditTransactionScreen.kt` |
 | 캘린더 | 월별 캘린더 뷰, 일별 수입/지출 표시, 날짜 클릭 시 거래 상세 | `ui/calendar/CalendarScreen.kt` |
 | 수신함 | 자동 수집된 거래 후보 검토 (승인/거절) | `ui/inbox/InboxScreen.kt` |
@@ -144,4 +144,6 @@ docs: CLAUDE.md 로그인 관련 문서 추가
 - 모달/바텀시트 배경: `Color.White` 고정 (다크모드에서도 흰색)
 - 거래 추가/수정 화면 배경: `Color.White` 고정
 - 홈 요약 카드: 그라데이션 배경 (AccentGradientStart → AccentGradientEnd → Navy900)
+- 예산 칩: 요약 카드 헤더 오른쪽에 `[+ 예산 300만]` 형태, 금액은 자동 단위 변환 (원/천/만/억)
+- 예산 수정 다이얼로그: `Color.White` 고정, 빠른 금액 칩 (100만/200만/300만)
 - 색상 테마: Navy + Violet 기반 (`ui/theme/Color.kt`)
