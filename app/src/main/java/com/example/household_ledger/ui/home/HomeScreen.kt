@@ -4,7 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.example.household_ledger.ui.theme.LocalIsDark
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,10 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -35,6 +32,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
+import com.example.household_ledger.data.budget.BudgetPreferences
 import com.example.household_ledger.data.mock.MockData
 import com.example.household_ledger.model.TransactionState
 import com.example.household_ledger.model.TransactionType
@@ -63,12 +62,21 @@ private sealed class ParseError {
 fun HomeScreen(
     onNavigateToInbox: () -> Unit,
     onNavigateToAddTransaction: () -> Unit,
-    onNavigateToPointWallet: () -> Unit,
     onNavigateToEditTransaction: (Long) -> Unit = {}
 ) {
     val numberFormat = NumberFormat.getNumberInstance(Locale.KOREA)
-    val isDark = isSystemInDarkTheme()
+    val isDark = LocalIsDark.current
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
+    // Budget state
+    val calendar = Calendar.getInstance()
+    val currentYear = calendar.get(Calendar.YEAR)
+    val currentMonth = calendar.get(Calendar.MONTH) + 1
+    var budget by remember {
+        mutableLongStateOf(BudgetPreferences.getMonthlyBudget(context, currentYear, currentMonth))
+    }
+    var showBudgetDialog by remember { mutableStateOf(false) }
 
     var aiInputText by remember { mutableStateOf("") }
     var showSheet by remember { mutableStateOf(false) }
@@ -110,36 +118,7 @@ fun HomeScreen(
                     containerColor = Color.Transparent,
                     titleContentColor = if (isDark) Navy50 else Navy900
                 ),
-                actions = {
-                    Surface(
-                        onClick = onNavigateToPointWallet,
-                        shape = RoundedCornerShape(20.dp),
-                        color = if (isDark) Navy800 else GoldLight,
-                        border = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Outlined.Toll,
-                                contentDescription = "포인트",
-                                tint = GoldPrimary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${MockData.totalPoints}P",
-                                color = GoldDark,
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = (-0.3).sp
-                                )
-                            )
-                        }
-                    }
-                }
+                actions = { }
             )
         },
         floatingActionButton = {
@@ -167,10 +146,11 @@ fun HomeScreen(
                     MonthlySummaryCard(
                         income = MockData.monthlyIncome,
                         expense = MockData.monthlyExpense,
-                        balance = MockData.balance,
+                        budget = budget,
                         numberFormat = numberFormat,
                         onIncomeClick = { showTransactionList = TransactionType.INCOME },
-                        onExpenseClick = { showTransactionList = TransactionType.EXPENSE }
+                        onExpenseClick = { showTransactionList = TransactionType.EXPENSE },
+                        onBudgetClick = { showBudgetDialog = true }
                     )
 
                     if (showTransactionList != null) {
@@ -184,7 +164,7 @@ fun HomeScreen(
                         ModalBottomSheet(
                             onDismissRequest = { showTransactionList = null },
                             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-                            containerColor = MaterialTheme.colorScheme.surface,
+                            containerColor = Color.White,
                             dragHandle = {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
@@ -196,7 +176,7 @@ fun HomeScreen(
                                             .width(40.dp)
                                             .height(4.dp)
                                             .clip(RoundedCornerShape(2.dp))
-                                            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
+                                            .background(Navy400.copy(alpha = 0.3f))
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
@@ -254,7 +234,7 @@ fun HomeScreen(
                                 )
 
                                 Spacer(modifier = Modifier.height(16.dp))
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                HorizontalDivider(color = Navy200.copy(alpha = 0.5f))
 
                                 // Transaction list
                                 LazyColumn(
@@ -419,6 +399,19 @@ fun HomeScreen(
         }
     }
 
+    // Budget edit dialog
+    if (showBudgetDialog) {
+        BudgetEditDialog(
+            currentBudget = budget,
+            onConfirm = { newBudget ->
+                budget = newBudget
+                BudgetPreferences.setMonthlyBudget(context, currentYear, currentMonth, newBudget)
+                showBudgetDialog = false
+            },
+            onDismiss = { showBudgetDialog = false }
+        )
+    }
+
     // Bottom sheet modal for parsed result
     if (showSheet && parsedResult != null) {
         ModalBottomSheet(
@@ -428,7 +421,7 @@ fun HomeScreen(
             },
             sheetState = sheetState,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = Color.White,
             dragHandle = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -440,7 +433,7 @@ fun HomeScreen(
                             .width(40.dp)
                             .height(4.dp)
                             .clip(RoundedCornerShape(2.dp))
-                            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
+                            .background(Navy400.copy(alpha = 0.3f))
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -859,11 +852,14 @@ private fun matchCategory(merchant: String, fullText: String, type: TransactionT
 private fun MonthlySummaryCard(
     income: Long,
     expense: Long,
-    balance: Long,
+    budget: Long,
     numberFormat: NumberFormat,
     onIncomeClick: () -> Unit = {},
-    onExpenseClick: () -> Unit = {}
+    onExpenseClick: () -> Unit = {},
+    onBudgetClick: () -> Unit = {}
 ) {
+    val balance = budget - expense
+    val hasBudget = budget > 0L
     val gradientBrush = Brush.linearGradient(
         colors = listOf(AccentGradientStart, AccentGradientEnd, Navy900),
         start = Offset(0f, 0f),
@@ -878,30 +874,6 @@ private fun MonthlySummaryCard(
             .clip(cardShape)
             .background(gradientBrush)
     ) {
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .offset(x = (-20).dp, y = (-30).dp)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.06f))
-        )
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .align(Alignment.TopEnd)
-                .offset(x = 20.dp, y = (-10).dp)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.04f))
-        )
-        Box(
-            modifier = Modifier
-                .size(60.dp)
-                .align(Alignment.BottomEnd)
-                .offset(x = (-30).dp, y = 15.dp)
-                .clip(CircleShape)
-                .background(AccentGradientWarm.copy(alpha = 0.12f))
-        )
-
         Column(modifier = Modifier.padding(24.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -911,14 +883,66 @@ private fun MonthlySummaryCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    "2월 요약",
+                    "${Calendar.getInstance().get(Calendar.MONTH) + 1}월 요약",
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Medium, letterSpacing = 0.5.sp
                     ),
                     color = Color.White.copy(alpha = 0.7f)
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Budget row
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .clickable(onClick = onBudgetClick),
+                shape = RoundedCornerShape(14.dp),
+                color = Color.White.copy(alpha = 0.1f)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(GoldPrimary.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Outlined.Savings, null, Modifier.size(16.dp), tint = AccentGradientWarm)
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text("예산", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                            if (hasBudget) {
+                                Text(
+                                    "${numberFormat.format(budget)}원",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = AccentGradientWarm
+                                )
+                            } else {
+                                Text(
+                                    "탭하여 예산을 설정해주세요",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White.copy(alpha = 0.5f)
+                                )
+                            }
+                        }
+                    }
+                    Icon(Icons.Outlined.Edit, null, Modifier.size(18.dp), tint = Color.White.copy(alpha = 0.5f))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Column(
@@ -989,16 +1013,215 @@ private fun MonthlySummaryCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text("잔액", style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.6f))
                 }
+                if (hasBudget) {
+                    Text(
+                        buildAnnotatedString {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.White, fontSize = 28.sp, letterSpacing = (-1).sp)) {
+                                append(numberFormat.format(balance))
+                            }
+                            withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = Color.White.copy(alpha = 0.5f), fontSize = 16.sp)) {
+                                append(" 원")
+                            }
+                        }
+                    )
+                } else {
+                    Text(
+                        "—",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color.White.copy(alpha = 0.3f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BudgetEditDialog(
+    currentBudget: Long,
+    onConfirm: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val numberFormat = NumberFormat.getNumberInstance(Locale.KOREA)
+    var budgetText by remember {
+        mutableStateOf(if (currentBudget > 0) currentBudget.toString() else "")
+    }
+    val parsedAmount = budgetText.toLongOrNull() ?: 0L
+    val isValid = parsedAmount > 0
+
+    val isDark = LocalIsDark.current
+
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = Color.White,
+            tonalElevation = 0.dp,
+            shadowElevation = 8.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(28.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Icon header
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            Brush.linearGradient(
+                                listOf(
+                                    GoldPrimary.copy(alpha = 0.15f),
+                                    AccentGradientEnd.copy(alpha = 0.1f)
+                                )
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Outlined.Savings,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = GoldPrimary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
                 Text(
-                    buildAnnotatedString {
-                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.White, fontSize = 28.sp, letterSpacing = (-1).sp)) {
-                            append(numberFormat.format(balance))
-                        }
-                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = Color.White.copy(alpha = 0.5f), fontSize = 16.sp)) {
-                            append(" 원")
-                        }
-                    }
+                    "월 예산 설정",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Navy900
                 )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    "이번 달 사용할 예산을 입력해주세요",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Navy600
+                )
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // Amount display
+                if (isValid) {
+                    Text(
+                        "${numberFormat.format(parsedAmount)}원",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = (-0.5).sp
+                        ),
+                        color = GoldPrimary
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                // Input field
+                OutlinedTextField(
+                    value = budgetText,
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() } && newValue.length <= 12) {
+                            budgetText = newValue
+                        }
+                    },
+                    placeholder = {
+                        Text(
+                            "예: 3000000",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Navy400.copy(alpha = 0.5f)
+                        )
+                    },
+                    suffix = {
+                        Text(
+                            "원",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Navy600
+                        )
+                    },
+                    textStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = (-0.3).sp,
+                        color = Navy900
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = GoldPrimary,
+                        unfocusedBorderColor = Navy200,
+                        focusedContainerColor = GoldLight.copy(alpha = 0.3f),
+                        unfocusedContainerColor = Color.Transparent,
+                        cursorColor = GoldPrimary
+                    )
+                )
+
+                // Quick amount chips
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(100L to "100만", 200L to "200만", 300L to "300만").forEach { (value, label) ->
+                        val amount = value * 10000
+                        SuggestionChip(
+                            onClick = { budgetText = amount.toString() },
+                            label = {
+                                Text(
+                                    label,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = SurfaceDim,
+                                labelColor = Navy700
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        border = ButtonDefaults.outlinedButtonBorder(enabled = true)
+                    ) {
+                        Text("취소", fontWeight = FontWeight.Medium)
+                    }
+                    Button(
+                        onClick = { onConfirm(parsedAmount) },
+                        enabled = isValid,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GoldPrimary,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Icon(Icons.Filled.Check, null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("확인", fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
     }
@@ -1007,7 +1230,7 @@ private fun MonthlySummaryCard(
 @Composable
 private fun InboxBanner(count: Int, onClick: () -> Unit, isDark: Boolean) {
     if (count > 0) {
-        val bannerShape = RoundedCornerShape(28.dp)
+        val bannerShape = RoundedCornerShape(20.dp)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1016,19 +1239,19 @@ private fun InboxBanner(count: Int, onClick: () -> Unit, isDark: Boolean) {
                 .border(1.dp, if (isDark) Navy600.copy(alpha = 0.4f) else Navy200, bannerShape)
                 .background(if (isDark) Navy800 else Color.White)
                 .clickable(onClick = onClick)
-                .drawBehind {
-                    drawRoundRect(
-                        brush = Brush.verticalGradient(listOf(AccentGradientStart, AccentGradientEnd)),
-                        topLeft = Offset(0f, size.height * 0.15f),
-                        size = Size(3.dp.toPx(), size.height * 0.7f),
-                        cornerRadius = CornerRadius(2.dp.toPx())
-                    )
-                }
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 14.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Box(
+                    modifier = Modifier
+                        .width(3.dp)
+                        .height(32.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(Brush.verticalGradient(listOf(AccentGradientStart, AccentGradientEnd)))
+                )
+                Spacer(modifier = Modifier.width(12.dp))
                 Icon(Icons.Outlined.FactCheck, null, tint = GoldPrimary, modifier = Modifier.size(22.dp))
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {

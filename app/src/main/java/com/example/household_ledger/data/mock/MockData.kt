@@ -65,38 +65,6 @@ object MockData {
         Candidate(5, 105, TransactionType.EXPENSE, 6500, "지하철", baseTime + 18000000, "카카오페이", CandidateStatus.CANDIDATE, 0.80f)
     )
 
-    val pointLedgerEntries = listOf(
-        PointLedger(1, 2, "거래 확정", baseTime - 3600000 * 1, 1),
-        PointLedger(2, 2, "거래 확정", baseTime - 3600000 * 2, 2),
-        PointLedger(3, 2, "거래 확정", baseTime - 3600000 * 3, 3),
-        PointLedger(4, 10, "하루 정산 보너스", baseTime - 86400000 * 1),
-        PointLedger(5, 2, "거래 확정", baseTime - 86400000 * 2, 5),
-        PointLedger(6, 2, "거래 확정", baseTime - 86400000 * 2, 6),
-        PointLedger(7, 20, "주간 리포트 확인", baseTime - 86400000 * 7),
-        PointLedger(8, 100, "월 마감 보너스", baseTime - 86400000 * 30)
-    )
-
-    val totalPoints: Int get() = pointLedgerEntries.sumOf { it.delta }
-
-    val shopItems = listOf(
-        ShopItem(1, "봄 꽃무늬 셔츠", ItemRarity.COMMON, 300, ItemType.CLOTH, "화사한 봄 느낌의 셔츠"),
-        ShopItem(2, "청바지", ItemRarity.COMMON, 400, ItemType.CLOTH, "클래식한 데님 청바지"),
-        ShopItem(3, "선글라스", ItemRarity.COMMON, 500, ItemType.ACCESSORY, "시크한 선글라스"),
-        ShopItem(4, "모자", ItemRarity.COMMON, 350, ItemType.ACCESSORY, "귀여운 버킷햇"),
-        ShopItem(5, "벚꽃 배경", ItemRarity.COMMON, 600, ItemType.BACKGROUND, "분홍빛 벚꽃 배경"),
-        ShopItem(6, "정장 세트", ItemRarity.RARE, 2000, ItemType.CLOTH, "격식 있는 정장"),
-        ShopItem(7, "왕관", ItemRarity.RARE, 2500, ItemType.ACCESSORY, "빛나는 황금 왕관"),
-        ShopItem(8, "우주 배경", ItemRarity.RARE, 3000, ItemType.BACKGROUND, "은하수가 흐르는 우주"),
-        ShopItem(9, "드래곤 갑옷", ItemRarity.EPIC, 5000, ItemType.CLOTH, "전설의 드래곤 갑옷"),
-        ShopItem(10, "날개", ItemRarity.EPIC, 4500, ItemType.ACCESSORY, "천사의 날개")
-    )
-
-    val characterState = CharacterState(
-        equippedCloth = shopItems[0].copy(owned = true),
-        equippedAccessory = shopItems[3].copy(owned = true),
-        equippedBackground = null
-    )
-
     // Summary helpers
     val monthlyExpense: Long get() = transactions
         .filter { it.type == TransactionType.EXPENSE && it.state == TransactionState.NORMAL }
@@ -105,8 +73,6 @@ object MockData {
     val monthlyIncome: Long get() = transactions
         .filter { it.type == TransactionType.INCOME && it.state == TransactionState.NORMAL }
         .sumOf { it.amount }
-
-    val balance: Long get() = monthlyIncome - monthlyExpense
 
     fun getCategoryById(id: Long): Category? = categories.find { it.id == id }
 
