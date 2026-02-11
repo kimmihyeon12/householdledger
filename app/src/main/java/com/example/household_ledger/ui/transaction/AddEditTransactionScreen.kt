@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import com.example.household_ledger.data.mock.MockData
 import com.example.household_ledger.model.TransactionType
@@ -42,17 +44,19 @@ fun AddEditTransactionScreen(
     val isSaveEnabled = amount.isNotBlank() && merchant.isNotBlank()
 
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         if (isEditMode) "거래 수정" else "거래 추가",
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Navy900
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.Close, contentDescription = "닫기")
+                        Icon(Icons.Default.Close, contentDescription = "닫기", tint = Navy900)
                     }
                 },
                 actions = {
@@ -67,7 +71,7 @@ fun AddEditTransactionScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = Color.White
                 )
             )
         },
@@ -75,7 +79,7 @@ fun AddEditTransactionScreen(
             Surface(
                 tonalElevation = 0.dp,
                 shadowElevation = 0.dp,
-                color = MaterialTheme.colorScheme.background
+                color = Color.White
             ) {
                 Button(
                     onClick = onNavigateBack,
@@ -86,8 +90,8 @@ fun AddEditTransactionScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                        containerColor = GoldPrimary,
+                        disabledContainerColor = Navy200
                     )
                 ) {
                     Text(
@@ -125,11 +129,11 @@ fun AddEditTransactionScreen(
                         brush = if (expenseSelected)
                             androidx.compose.ui.graphics.SolidColor(ExpenseRed)
                         else
-                            androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                            androidx.compose.ui.graphics.SolidColor(Navy200)
                     ),
                     colors = CardDefaults.outlinedCardColors(
                         containerColor = if (expenseSelected) ExpenseSoft.copy(alpha = 0.3f)
-                        else MaterialTheme.colorScheme.surface
+                        else Color.White
                     )
                 ) {
                     Column(
@@ -141,7 +145,7 @@ fun AddEditTransactionScreen(
                         Icon(
                             Icons.Outlined.TrendingDown,
                             null,
-                            tint = if (expenseSelected) ExpenseRed else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (expenseSelected) ExpenseRed else Navy600,
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
@@ -149,7 +153,7 @@ fun AddEditTransactionScreen(
                             "지출",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = if (expenseSelected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (expenseSelected) ExpenseRed else MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (expenseSelected) ExpenseRed else Navy600
                         )
                     }
                 }
@@ -167,11 +171,11 @@ fun AddEditTransactionScreen(
                         brush = if (incomeSelected)
                             androidx.compose.ui.graphics.SolidColor(IncomeBlue)
                         else
-                            androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                            androidx.compose.ui.graphics.SolidColor(Navy200)
                     ),
                     colors = CardDefaults.outlinedCardColors(
                         containerColor = if (incomeSelected) IncomeSoft.copy(alpha = 0.3f)
-                        else MaterialTheme.colorScheme.surface
+                        else Color.White
                     )
                 ) {
                     Column(
@@ -183,7 +187,7 @@ fun AddEditTransactionScreen(
                         Icon(
                             Icons.Outlined.TrendingUp,
                             null,
-                            tint = if (incomeSelected) IncomeBlue else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (incomeSelected) IncomeBlue else Navy600,
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
@@ -191,7 +195,7 @@ fun AddEditTransactionScreen(
                             "수입",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = if (incomeSelected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (incomeSelected) IncomeBlue else MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (incomeSelected) IncomeBlue else Navy600
                         )
                     }
                 }
@@ -204,7 +208,7 @@ fun AddEditTransactionScreen(
                     if (newValue.all { it.isDigit() }) amount = newValue
                 },
                 label = { Text("금액") },
-                suffix = { Text("원", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                suffix = { Text("원", color = Navy600) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -226,7 +230,7 @@ fun AddEditTransactionScreen(
                 Text(
                     text = "카테고리",
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = Navy600,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
                 FlowRow(
@@ -244,7 +248,7 @@ fun AddEditTransactionScreen(
                                     category.icon,
                                     contentDescription = null,
                                     modifier = Modifier.size(16.dp),
-                                    tint = if (selected) category.color else MaterialTheme.colorScheme.onSurfaceVariant
+                                    tint = if (selected) category.color else Navy600
                                 )
                             },
                             shape = RoundedCornerShape(10.dp)
@@ -279,7 +283,7 @@ fun AddEditTransactionScreen(
                 border = CardDefaults.outlinedCardBorder().copy(
                     width = 1.dp,
                     brush = androidx.compose.ui.graphics.SolidColor(
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                        Navy200
                     )
                 )
             ) {
@@ -300,7 +304,7 @@ fun AddEditTransactionScreen(
                         Text(
                             text = "날짜",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Navy600
                         )
                         Text(
                             text = dateText,
@@ -341,7 +345,8 @@ fun AddEditTransactionScreen(
                     Text("취소")
                 }
             },
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(20.dp),
+            containerColor = Color.White
         )
     }
 }
