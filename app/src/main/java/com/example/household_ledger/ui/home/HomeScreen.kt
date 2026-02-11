@@ -875,74 +875,65 @@ private fun MonthlySummaryCard(
             .background(gradientBrush)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Outlined.CalendarMonth, null,
-                    modifier = Modifier.size(16.dp),
-                    tint = Color.White.copy(alpha = 0.7f)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    "${Calendar.getInstance().get(Calendar.MONTH) + 1}월 요약",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Medium, letterSpacing = 0.5.sp
-                    ),
-                    color = Color.White.copy(alpha = 0.7f)
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Budget row
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(14.dp))
-                    .clickable(onClick = onBudgetClick),
-                shape = RoundedCornerShape(14.dp),
-                color = Color.White.copy(alpha = 0.15f)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Outlined.CalendarMonth, null,
+                        modifier = Modifier.size(16.dp),
+                        tint = Color.White.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        "${Calendar.getInstance().get(Calendar.MONTH) + 1}월 요약",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Medium, letterSpacing = 0.5.sp
+                        ),
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                }
+                // Budget chip
+                Surface(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable(onClick = onBudgetClick),
+                    shape = RoundedCornerShape(10.dp),
+                    color = Color.White.copy(alpha = 0.15f)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(28.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.White.copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Outlined.Savings, null, Modifier.size(16.dp), tint = Color.White.copy(alpha = 0.8f))
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text("예산", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.7f))
-                            if (hasBudget) {
-                                Text(
-                                    "${numberFormat.format(budget)}원",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            } else {
-                                Text(
-                                    "탭하여 예산을 설정해주세요",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color.White.copy(alpha = 0.5f)
-                                )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Add, null, Modifier.size(14.dp), tint = Color.White.copy(alpha = 0.7f))
+                        Spacer(modifier = Modifier.width(3.dp))
+                        if (hasBudget) {
+                            val budgetLabel = when {
+                                budget >= 100_000_000L -> "${numberFormat.format(budget / 100_000_000)}억"
+                                budget >= 10_000L -> "${numberFormat.format(budget / 10_000)}만"
+                                budget >= 1_000L -> "${numberFormat.format(budget / 1_000)}천"
+                                else -> "${numberFormat.format(budget)}원"
                             }
+                            Text(
+                                "예산 $budgetLabel",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        } else {
+                            Text(
+                                "예산",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White.copy(alpha = 0.7f)
+                            )
                         }
                     }
-                    Icon(Icons.Outlined.Edit, null, Modifier.size(18.dp), tint = Color.White.copy(alpha = 0.6f))
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Column(
