@@ -899,7 +899,7 @@ private fun MonthlySummaryCard(
                     .clip(RoundedCornerShape(14.dp))
                     .clickable(onClick = onBudgetClick),
                 shape = RoundedCornerShape(14.dp),
-                color = Color.White.copy(alpha = 0.1f)
+                color = Color.White.copy(alpha = 0.15f)
             ) {
                 Row(
                     modifier = Modifier
@@ -913,20 +913,20 @@ private fun MonthlySummaryCard(
                             modifier = Modifier
                                 .size(28.dp)
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(GoldPrimary.copy(alpha = 0.25f)),
+                                .background(Color.White.copy(alpha = 0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Outlined.Savings, null, Modifier.size(16.dp), tint = AccentGradientWarm)
+                            Icon(Icons.Outlined.Savings, null, Modifier.size(16.dp), tint = Color.White.copy(alpha = 0.8f))
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
-                            Text("예산", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.6f))
+                            Text("예산", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.7f))
                             if (hasBudget) {
                                 Text(
                                     "${numberFormat.format(budget)}원",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = AccentGradientWarm
+                                    color = Color.White
                                 )
                             } else {
                                 Text(
@@ -938,7 +938,7 @@ private fun MonthlySummaryCard(
                             }
                         }
                     }
-                    Icon(Icons.Outlined.Edit, null, Modifier.size(18.dp), tint = Color.White.copy(alpha = 0.5f))
+                    Icon(Icons.Outlined.Edit, null, Modifier.size(18.dp), tint = Color.White.copy(alpha = 0.6f))
                 }
             }
 
