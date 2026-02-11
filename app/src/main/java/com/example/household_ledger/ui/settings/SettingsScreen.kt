@@ -20,6 +20,9 @@ import com.example.household_ledger.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen() {
+    val currentThemeMode = LocalThemeMode.current
+    val onThemeModeChange = LocalOnThemeModeChange.current
+
     var notificationEnabled by remember { mutableStateOf(false) }
     var samsungCard by remember { mutableStateOf(true) }
     var hyundaiCard by remember { mutableStateOf(true) }
@@ -45,6 +48,63 @@ fun SettingsScreen() {
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
+
+            // Theme Mode Section
+            SectionLabel("화면 모드")
+
+            val isDarkMode = currentThemeMode == ThemeMode.DARK
+
+            OutlinedCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                border = CardDefaults.outlinedCardBorder().copy(
+                    width = 1.dp,
+                    brush = androidx.compose.ui.graphics.SolidColor(
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+                    )
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        if (isDarkMode) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
+                        contentDescription = null,
+                        tint = if (isDarkMode) GoldPrimary
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "다크 모드",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            if (isDarkMode) "다크 모드가 적용 중입니다"
+                            else "기본 시스템 설정을 따릅니다",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = isDarkMode,
+                        onCheckedChange = { checked ->
+                            onThemeModeChange(if (checked) ThemeMode.DARK else ThemeMode.SYSTEM)
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = GoldPrimary,
+                            checkedThumbColor = MaterialTheme.colorScheme.surface
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Notification Permission Section
             SectionLabel("알림 접근 권한")
@@ -215,7 +275,7 @@ fun SettingsScreen() {
             // App info
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                "AutoLedger v1.0",
+                "콩돈 v1.0",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
                 modifier = Modifier

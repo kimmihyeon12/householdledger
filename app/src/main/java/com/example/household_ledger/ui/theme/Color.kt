@@ -29,8 +29,6 @@ val IncomeBlue = Color(0xFF3B82F6)
 val IncomeSoft = Color(0xFFDBEAFE)
 val ConfirmGreen = Color(0xFF10B981)
 val ConfirmSoft = Color(0xFFD1FAE5)
-val PointGold = Color(0xFF7C5CFC)
-val PointGoldSoft = Color(0xFFEDE9FE)
 
 // Category colors - muted & refined
 val CategoryFood = Color(0xFFF97316)
@@ -48,7 +46,3 @@ val SurfaceDim = Color(0xFFF4F4F8)
 val CardLight = Color(0xFFFFFFFF)
 val CardDark = Color(0xFF1E293B)
 
-// Rarity
-val RarityCommon = Color(0xFF64748B)
-val RarityRare = Color(0xFF6366F1)
-val RarityEpic = Color(0xFFA855F7)
