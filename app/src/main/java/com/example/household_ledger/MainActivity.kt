@@ -7,9 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.example.household_ledger.ui.navigation.AppNavigation
-import com.example.household_ledger.ui.theme.AutoLedgerTheme
-import com.example.household_ledger.ui.theme.ThemePreferences
+import com.example.household_ledger.core.ui.navigation.AppNavigation
+import com.example.household_ledger.core.ui.theme.AutoLedgerTheme
+import com.example.household_ledger.core.ui.theme.ThemePreferences
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
