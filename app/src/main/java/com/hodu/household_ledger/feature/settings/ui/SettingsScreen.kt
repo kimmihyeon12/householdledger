@@ -1,4 +1,4 @@
-package com.example.household_ledger.feature.settings.ui
+package com.hodu.household_ledger.feature.settings.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,13 +15,21 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.household_ledger.core.ui.theme.*
+import com.hodu.household_ledger.core.data.local.UserManager
+import com.hodu.household_ledger.core.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onLogout: () -> Unit = {},
+    onDeleteAccount: () -> Unit = {}
+) {
     val currentThemeMode = LocalThemeMode.current
     val onThemeModeChange = LocalOnThemeModeChange.current
+
+    val nickname = UserManager.getNickname()
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    var showDeleteAccountDialog by remember { mutableStateOf(false) }
 
     var notificationEnabled by remember { mutableStateOf(false) }
     var samsungCard by remember { mutableStateOf(true) }
@@ -48,6 +56,35 @@ fun SettingsScreen() {
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
+
+            // User Info Section
+            SectionLabel("계정")
+
+            OutlinedCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                border = CardDefaults.outlinedCardBorder().copy(
+                    width = 1.dp,
+                    brush = androidx.compose.ui.graphics.SolidColor(
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+                    )
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        nickname ?: "사용자",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Theme Mode Section
             SectionLabel("화면 모드")
@@ -272,8 +309,44 @@ fun SettingsScreen() {
                 }
             }
 
+            // Logout
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedButton(
+                onClick = { showLogoutDialog = true },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = ExpenseRed
+                ),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    ExpenseRed.copy(alpha = 0.5f)
+                )
+            ) {
+                Icon(
+                    Icons.Outlined.Logout,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("로그아웃", fontWeight = FontWeight.Medium)
+            }
+
+            // 회원 탈퇴
+            Spacer(modifier = Modifier.height(8.dp))
+            TextButton(
+                onClick = { showDeleteAccountDialog = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "회원 탈퇴",
+                    color = ExpenseRed.copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
             // App info
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 "콩돈 v1.0",
                 style = MaterialTheme.typography.bodySmall,
@@ -284,6 +357,52 @@ fun SettingsScreen() {
                 textAlign = TextAlign.Center
             )
         }
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text("로그아웃") },
+            text = { Text("정말 로그아웃하시겠습니까?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        onLogout()
+                    }
+                ) {
+                    Text("로그아웃", color = ExpenseRed)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("취소")
+                }
+            }
+        )
+    }
+
+    if (showDeleteAccountDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteAccountDialog = false },
+            title = { Text("회원 탈퇴") },
+            text = { Text("탈퇴하면 모든 데이터가 삭제되며 복구할 수 없습니다.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteAccountDialog = false
+                        onDeleteAccount()
+                    }
+                ) {
+                    Text("탈퇴", color = ExpenseRed)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteAccountDialog = false }) {
+                    Text("취소")
+                }
+            }
+        )
     }
 }
 

@@ -13,4 +13,8 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.Householdledger.Splash" parent="Theme.Householdledger">
+        <item name="android:windowBackground">@color/navy900</item>
+    </style>
 </resources>

@@ -1,12 +1,12 @@
-package com.example.household_ledger.feature.home.ui
+package com.hodu.household_ledger.feature.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.household_ledger.core.data.repository.*
-import com.example.household_ledger.core.domain.model.*
-import com.example.household_ledger.core.network.ApiClient
-import com.example.household_ledger.core.network.dto.AiParseRequestDto
-import com.example.household_ledger.core.network.dto.CreateTransactionDto
+import com.hodu.household_ledger.core.data.repository.*
+import com.hodu.household_ledger.core.domain.model.*
+import com.hodu.household_ledger.core.network.ApiClient
+import com.hodu.household_ledger.core.network.dto.AiParseRequestDto
+import com.hodu.household_ledger.core.network.dto.CreateTransactionDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -44,19 +44,17 @@ class HomeViewModel : ViewModel() {
     val currentYear = calendar.get(Calendar.YEAR)
     val currentMonth = calendar.get(Calendar.MONTH) + 1
 
-    init {
-        loadData()
-    }
-
     fun loadData() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                launch { loadTransactions() }
-                launch { loadCategories() }
-                launch { loadCandidateCount() }
-                launch { loadBudget() }
-                launch { loadMonthlySummary() }
+                kotlinx.coroutines.coroutineScope {
+                    launch { loadTransactions() }
+                    launch { loadCategories() }
+                    launch { loadCandidateCount() }
+                    launch { loadBudget() }
+                    launch { loadMonthlySummary() }
+                }
             } finally {
                 _isLoading.value = false
             }

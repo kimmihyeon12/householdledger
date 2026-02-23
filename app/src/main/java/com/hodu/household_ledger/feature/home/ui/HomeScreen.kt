@@ -1,10 +1,10 @@
-package com.example.household_ledger.feature.home.ui
+package com.hodu.household_ledger.feature.home.ui
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import com.example.household_ledger.core.ui.theme.LocalIsDark
+import com.hodu.household_ledger.core.ui.theme.LocalIsDark
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +18,9 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -33,10 +36,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.household_ledger.core.domain.model.TransactionState
-import com.example.household_ledger.core.domain.model.TransactionType
-import com.example.household_ledger.core.ui.component.TransactionItem
-import com.example.household_ledger.core.ui.theme.*
+import com.hodu.household_ledger.core.domain.model.TransactionState
+import com.hodu.household_ledger.core.domain.model.TransactionType
+import com.hodu.household_ledger.core.ui.component.TransactionItem
+import com.hodu.household_ledger.core.ui.theme.*
 import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.util.*
@@ -74,6 +77,20 @@ fun HomeScreen(
     val monthlyIncome by viewModel.monthlyIncome.collectAsState()
     val monthlyExpense by viewModel.monthlyExpense.collectAsState()
     val budget by viewModel.budget.collectAsState()
+
+    // 화면이 다시 보일 때마다 데이터 리로드
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.loadData()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     var showBudgetDialog by remember { mutableStateOf(false) }
     var aiInputText by remember { mutableStateOf("") }
@@ -477,8 +494,8 @@ fun HomeScreen(
 @Composable
 private fun EditableResultSheet(
     initialResult: ParsedResult,
-    categories: List<com.example.household_ledger.core.domain.model.Category>,
-    getCategoryById: (Long) -> com.example.household_ledger.core.domain.model.Category?,
+    categories: List<com.hodu.household_ledger.core.domain.model.Category>,
+    getCategoryById: (Long) -> com.hodu.household_ledger.core.domain.model.Category?,
     numberFormat: NumberFormat,
     onConfirm: (ParsedResult) -> Unit,
     onCancel: () -> Unit
