@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "381671272830",
+    "project_id": "project-8ddbe",
+    "storage_bucket": "project-8ddbe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381671272830:android:3c370f46f029c2dd3b832f",
+        "android_client_info": {
+          "package_name": "com.hodu.household_ledger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381671272830-1gvtd1rqkti9nqa3mtq93hn3022ciqr5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hodu.household_ledger",
+            "certificate_hash": "7d3f82844a38fc7fada49116ede71692fa62fda0"
+          }
+        },
+        {
+          "client_id": "381671272830-f0ce2kg93hio1bohrl31einuak1d5nq1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hodu.household_ledger",
+            "certificate_hash": "6dc0038fb5dea55c795962e2c8b524ce04bd96e5"
+          }
+        },
+        {
+          "client_id": "381671272830-ik067bhc9sgfka7qbv7m1o9dsk1b8obd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlSyZjp2AnRx2n1reE67JOC6_aa6NupOs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381671272830-ik067bhc9sgfka7qbv7m1o9dsk1b8obd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "381671272830-46ft5iboeemp6fqlhct3cna2eslc56b7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myget"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
