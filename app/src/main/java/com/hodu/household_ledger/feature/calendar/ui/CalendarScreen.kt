@@ -228,6 +228,7 @@ fun CalendarScreen(
                                     items(filteredTransactions) { transaction ->
                                         TransactionItem(
                                             transaction = transaction,
+                                            category = viewModel.getCategoryById(transaction.categoryId),
                                             onClick = {
                                                 showTransactionList = null
                                                 onNavigateToEditTransaction(transaction.id)
@@ -285,6 +286,7 @@ fun CalendarScreen(
                     items(selectedTransactions) { transaction ->
                         TransactionItem(
                             transaction = transaction,
+                            category = viewModel.getCategoryById(transaction.categoryId),
                             onClick = { onNavigateToEditTransaction(transaction.id) }
                         )
                         HorizontalDivider(

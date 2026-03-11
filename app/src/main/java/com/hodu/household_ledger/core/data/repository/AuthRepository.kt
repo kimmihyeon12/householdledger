@@ -22,6 +22,9 @@ class AuthRepository {
     }
 
     suspend fun deleteAccount() {
-        authApi.deleteAccount()
+        val response = authApi.deleteAccount()
+        if (!response.isSuccessful) {
+            throw Exception("계정 삭제 실패: ${response.code()}")
+        }
     }
 }

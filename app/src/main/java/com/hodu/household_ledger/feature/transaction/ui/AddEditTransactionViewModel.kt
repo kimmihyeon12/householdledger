@@ -2,6 +2,7 @@ package com.hodu.household_ledger.feature.transaction.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hodu.household_ledger.core.common.AppState
 import com.hodu.household_ledger.core.data.repository.CategoryRepository
 import com.hodu.household_ledger.core.data.repository.TransactionRepository
 import com.hodu.household_ledger.core.domain.model.Category
@@ -33,7 +34,9 @@ class AddEditTransactionViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _categories.value = categoryRepo.getCategories()
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "카테고리를 불러오지 못했습니다", retry = { loadCategories() })
+            }
         }
     }
 
@@ -41,7 +44,9 @@ class AddEditTransactionViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _editTransaction.value = transactionRepo.getTransaction(id)
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "거래 정보를 불러오지 못했습니다")
+            }
         }
     }
 
@@ -64,7 +69,9 @@ class AddEditTransactionViewModel : ViewModel() {
                     note = note
                 )
                 _saveSuccess.value = true
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "거래 저장에 실패했습니다")
+            }
         }
     }
 
@@ -87,7 +94,9 @@ class AddEditTransactionViewModel : ViewModel() {
                     note = note
                 )
                 _saveSuccess.value = true
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "거래 수정에 실패했습니다")
+            }
         }
     }
 
@@ -96,7 +105,9 @@ class AddEditTransactionViewModel : ViewModel() {
             try {
                 transactionRepo.deleteTransaction(id)
                 _saveSuccess.value = true
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "거래 삭제에 실패했습니다")
+            }
         }
     }
 

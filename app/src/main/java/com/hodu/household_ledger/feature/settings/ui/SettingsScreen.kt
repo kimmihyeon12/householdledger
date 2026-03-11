@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -362,46 +363,60 @@ fun SettingsScreen(
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = { Text("로그아웃") },
-            text = { Text("정말 로그아웃하시겠습니까?") },
+            title = { Text("로그아웃", fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    "정말 로그아웃하시겠습니까?",
+                    color = Navy600
+                )
+            },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         showLogoutDialog = false
                         onLogout()
-                    }
-                ) {
-                    Text("로그아웃", color = ExpenseRed)
-                }
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = ExpenseRed)
+                ) { Text("로그아웃") }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("취소")
+                    Text("취소", color = Navy600)
                 }
-            }
+            },
+            shape = RoundedCornerShape(20.dp),
+            containerColor = Color.White
         )
     }
 
     if (showDeleteAccountDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteAccountDialog = false },
-            title = { Text("회원 탈퇴") },
-            text = { Text("탈퇴하면 모든 데이터가 삭제되며 복구할 수 없습니다.") },
+            title = { Text("회원 탈퇴", fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    "탈퇴하면 모든 데이터가 삭제되며\n복구할 수 없습니다.",
+                    color = Navy600
+                )
+            },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         showDeleteAccountDialog = false
                         onDeleteAccount()
-                    }
-                ) {
-                    Text("탈퇴", color = ExpenseRed)
-                }
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = ExpenseRed)
+                ) { Text("탈퇴") }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteAccountDialog = false }) {
-                    Text("취소")
+                    Text("취소", color = Navy600)
                 }
-            }
+            },
+            shape = RoundedCornerShape(20.dp),
+            containerColor = Color.White
         )
     }
 }

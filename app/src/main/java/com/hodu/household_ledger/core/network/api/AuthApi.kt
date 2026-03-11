@@ -4,6 +4,7 @@ import com.hodu.household_ledger.core.network.dto.GoogleLoginRequest
 import com.hodu.household_ledger.core.network.dto.KakaoLoginRequest
 import com.hodu.household_ledger.core.network.dto.LoginResponse
 import com.hodu.household_ledger.core.network.dto.UserDto
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -20,5 +21,5 @@ interface AuthApi {
     suspend fun getMe(): UserDto
 
     @DELETE("auth/me")
-    suspend fun deleteAccount()
+    suspend fun deleteAccount(): Response<Unit>
 }

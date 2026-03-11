@@ -2,6 +2,7 @@ package com.hodu.household_ledger.feature.inbox.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hodu.household_ledger.core.common.AppState
 import com.hodu.household_ledger.core.data.repository.CandidateRepository
 import com.hodu.household_ledger.core.domain.model.Candidate
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,10 +26,14 @@ class InboxViewModel : ViewModel() {
     fun loadCandidates() {
         viewModelScope.launch {
             _isLoading.value = true
+            AppState.startLoading()
             try {
                 _candidates.value = candidateRepo.getCandidates()
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "후보 목록을 불러오지 못했습니다", retry = { loadCandidates() })
+            }
             _isLoading.value = false
+            AppState.stopLoading()
         }
     }
 
@@ -37,7 +42,9 @@ class InboxViewModel : ViewModel() {
             try {
                 candidateRepo.confirmCandidate(id, categoryId)
                 _candidates.value = _candidates.value.filter { it.id != id }
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "후보 확정에 실패했습니다")
+            }
         }
     }
 
@@ -46,7 +53,9 @@ class InboxViewModel : ViewModel() {
             try {
                 candidateRepo.deleteCandidate(id)
                 _candidates.value = _candidates.value.filter { it.id != id }
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "후보 삭제에 실패했습니다")
+            }
         }
     }
 }

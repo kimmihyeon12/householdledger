@@ -2,6 +2,7 @@ package com.hodu.household_ledger.feature.stats.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hodu.household_ledger.core.common.AppState
 import com.hodu.household_ledger.core.data.mapper.CategoryMapper
 import com.hodu.household_ledger.core.data.repository.StatsRepository
 import com.hodu.household_ledger.core.domain.model.Category
@@ -36,10 +37,14 @@ class StatsViewModel : ViewModel() {
 
     private fun loadStats() {
         viewModelScope.launch {
+            AppState.startLoading()
+            var hasError = false
             try {
                 val summary = statsRepo.getMonthlySummary(currentYear, currentMonth)
                 _monthlyExpense.value = summary.totalExpense
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                hasError = true
+            }
 
             try {
                 val breakdown = statsRepo.getCategoryBreakdown(currentYear, currentMonth)
@@ -51,10 +56,16 @@ class StatsViewModel : ViewModel() {
                     val percentage = if (totalExpense > 0) dto.total.toDouble() / totalExpense * 100 else 0.0
                     CategoryBreakdownEntry(category, dto.total, percentage)
                 }
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                hasError = true
+            }
 
             // Load last 6 months
             loadMonthlySummaries()
+            AppState.stopLoading()
+            if (hasError) {
+                AppState.showError(message = "통계 데이터를 불러오지 못했습니다", retry = { loadStats() })
+            }
         }
     }
 
@@ -75,7 +86,9 @@ class StatsViewModel : ViewModel() {
                 }
             }
             _monthlySummaries.value = summaries
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            AppState.showError(message = "월별 추이를 불러오지 못했습니다")
+        }
     }
 }
 

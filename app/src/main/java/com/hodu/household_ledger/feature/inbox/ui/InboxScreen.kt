@@ -38,7 +38,7 @@ fun InboxScreen(
     val dateFormat = SimpleDateFormat("MM.dd HH:mm", Locale.KOREA)
 
     Scaffold(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -56,8 +56,8 @@ fun InboxScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Navy900
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }
@@ -89,13 +89,13 @@ fun InboxScreen(
                         "모든 거래를 검토했습니다",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Navy900
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         "새로운 거래가 수집되면 여기에 표시됩니다",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Navy600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -122,7 +122,7 @@ fun InboxScreen(
                         Text(
                             "대기 중인 거래",
                             style = MaterialTheme.typography.labelLarge,
-                            color = Navy600,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
                         )
                         Text(
@@ -172,7 +172,7 @@ private fun CandidateCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
@@ -196,7 +196,7 @@ private fun CandidateCard(
                 Text(
                     "${candidate.channel} · ${dateFormat.format(Date(candidate.occurredAt))}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Navy600
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -211,7 +211,7 @@ private fun CandidateCard(
                     candidate.merchant,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Navy900
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     "${if (isExpense) "-" else "+"}${numberFormat.format(candidate.amount)}원",
@@ -227,7 +227,7 @@ private fun CandidateCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("신뢰도", style = MaterialTheme.typography.bodySmall, color = Navy600)
+                Text("신뢰도", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.width(10.dp))
                 LinearProgressIndicator(
                     progress = { candidate.confidence },
@@ -240,7 +240,7 @@ private fun CandidateCard(
                         candidate.confidence >= 0.5f -> GoldPrimary
                         else -> ExpenseRed
                     },
-                    trackColor = Navy200.copy(alpha = 0.5f)
+                    trackColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
@@ -268,9 +268,9 @@ private fun CandidateCard(
                         .height(44.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(Icons.Outlined.Delete, null, modifier = Modifier.size(18.dp), tint = Navy600)
+                    Icon(Icons.Outlined.Delete, null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("삭제", color = Navy600)
+                    Text("삭제", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Button(
                     onClick = onConfirm,

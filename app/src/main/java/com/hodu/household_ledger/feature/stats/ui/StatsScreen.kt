@@ -42,7 +42,7 @@ fun StatsScreen(
     val monthlySummaries by viewModel.monthlySummaries.collectAsState()
 
     Scaffold(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -55,8 +55,8 @@ fun StatsScreen(
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Navy900
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }
@@ -73,7 +73,7 @@ fun StatsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 8.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(SurfaceDim),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 tabs.forEachIndexed { index, label ->
@@ -83,7 +83,7 @@ fun StatsScreen(
                             .weight(1f)
                             .clip(RoundedCornerShape(14.dp))
                             .clickable { selectedTab = index }
-                            .background(if (selected) Color.White else Color.Transparent)
+                            .background(if (selected) MaterialTheme.colorScheme.surface else Color.Transparent)
                             .padding(vertical = 10.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -91,7 +91,7 @@ fun StatsScreen(
                             text = label,
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (selected) Navy900 else Navy600,
+                            color = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
                     }
@@ -139,14 +139,14 @@ private fun MonthlyTrendContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
                     "월별 지출 추이",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Navy600
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -169,7 +169,7 @@ private fun MonthlyTrendContent(
                                 Text(
                                     "${amount / 10000}만",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = if (isCurrentMonth) GoldPrimary else Navy400,
+                                    color = if (isCurrentMonth) GoldPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 9.sp,
                                     fontWeight = if (isCurrentMonth) FontWeight.Bold else FontWeight.Normal
                                 )
@@ -193,7 +193,7 @@ private fun MonthlyTrendContent(
                                 month,
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = if (isCurrentMonth) FontWeight.Bold else FontWeight.Normal,
-                                color = if (isCurrentMonth) Navy900 else Navy400
+                                color = if (isCurrentMonth) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -208,7 +208,7 @@ private fun MonthlyTrendContent(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Row(
@@ -233,7 +233,7 @@ private fun MonthlyTrendContent(
                     }
                     Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("전월 대비", style = MaterialTheme.typography.bodySmall, color = Navy600)
+                        Text("전월 대비", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             "${if (isIncrease) "+" else ""}${numberFormat.format(diff)}원",
@@ -264,7 +264,7 @@ private fun MonthlyTrendContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Row(
@@ -289,13 +289,13 @@ private fun MonthlyTrendContent(
                 }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("6개월 평균", style = MaterialTheme.typography.bodySmall, color = Navy600)
+                    Text("6개월 평균", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         "${numberFormat.format(sixMonthAvg)}원",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Navy900
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -343,12 +343,12 @@ private fun CategoryStatsContent(
                 }
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("총 지출", style = MaterialTheme.typography.bodySmall, color = Navy600)
+                Text("총 지출", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     "${numberFormat.format(totalExpense)}",
                     style = MaterialTheme.typography.headlineMedium.copy(letterSpacing = (-0.5).sp),
                     fontWeight = FontWeight.Bold,
-                    color = Navy900
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -359,7 +359,7 @@ private fun CategoryStatsContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(modifier = Modifier.padding(4.dp)) {
@@ -391,7 +391,7 @@ private fun CategoryStatsContent(
                                 text = entry.category.name,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium,
-                                color = Navy900
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             LinearProgressIndicator(
@@ -410,19 +410,19 @@ private fun CategoryStatsContent(
                                 text = "${numberFormat.format(entry.amount)}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Navy900
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "${percentage}%",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = Navy600
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                     if (index < sortedEntries.size - 1) {
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 16.dp),
-                            color = Navy200.copy(alpha = 0.5f)
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                         )
                     }
                 }

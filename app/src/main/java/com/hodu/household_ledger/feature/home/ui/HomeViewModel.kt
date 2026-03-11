@@ -2,6 +2,7 @@ package com.hodu.household_ledger.feature.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hodu.household_ledger.core.common.AppState
 import com.hodu.household_ledger.core.data.repository.*
 import com.hodu.household_ledger.core.domain.model.*
 import com.hodu.household_ledger.core.network.ApiClient
@@ -47,52 +48,48 @@ class HomeViewModel : ViewModel() {
     fun loadData() {
         viewModelScope.launch {
             _isLoading.value = true
+            AppState.startLoading()
+            var hasError = false
             try {
                 kotlinx.coroutines.coroutineScope {
-                    launch { loadTransactions() }
-                    launch { loadCategories() }
-                    launch { loadCandidateCount() }
-                    launch { loadBudget() }
-                    launch { loadMonthlySummary() }
+                    launch { runCatching { loadTransactions() }.onFailure { hasError = true } }
+                    launch { runCatching { loadCategories() }.onFailure { hasError = true } }
+                    launch { runCatching { loadCandidateCount() }.onFailure { hasError = true } }
+                    launch { runCatching { loadBudget() }.onFailure { hasError = true } }
+                    launch { runCatching { loadMonthlySummary() }.onFailure { hasError = true } }
                 }
             } finally {
                 _isLoading.value = false
+                AppState.stopLoading()
+            }
+            if (hasError) {
+                AppState.showError(message = "데이터를 불러오지 못했습니다", retry = { loadData() })
             }
         }
     }
 
     private suspend fun loadTransactions() {
-        try {
-            _transactions.value = transactionRepo.getTransactions(
-                year = currentYear, month = currentMonth
-            ).sortedByDescending { it.occurredAt }
-        } catch (_: Exception) {}
+        _transactions.value = transactionRepo.getTransactions(
+            year = currentYear, month = currentMonth
+        ).sortedByDescending { it.occurredAt }
     }
 
     private suspend fun loadCategories() {
-        try {
-            _categories.value = categoryRepo.getCategories()
-        } catch (_: Exception) {}
+        _categories.value = categoryRepo.getCategories()
     }
 
     private suspend fun loadCandidateCount() {
-        try {
-            _candidateCount.value = candidateRepo.getCandidates().size
-        } catch (_: Exception) {}
+        _candidateCount.value = candidateRepo.getCandidates().size
     }
 
     private suspend fun loadBudget() {
-        try {
-            _budget.value = budgetRepo.getBudget(currentYear, currentMonth)
-        } catch (_: Exception) {}
+        _budget.value = budgetRepo.getBudget(currentYear, currentMonth)
     }
 
     private suspend fun loadMonthlySummary() {
-        try {
-            val summary = StatsRepository().getMonthlySummary(currentYear, currentMonth)
-            _monthlyIncome.value = summary.totalIncome
-            _monthlyExpense.value = summary.totalExpense
-        } catch (_: Exception) {}
+        val summary = StatsRepository().getMonthlySummary(currentYear, currentMonth)
+        _monthlyIncome.value = summary.totalIncome
+        _monthlyExpense.value = summary.totalExpense
     }
 
     fun setBudget(amount: Long) {
@@ -100,7 +97,9 @@ class HomeViewModel : ViewModel() {
             try {
                 budgetRepo.setBudget(currentYear, currentMonth, amount)
                 _budget.value = amount
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "예산 설정에 실패했습니다", retry = { setBudget(amount) })
+            }
         }
     }
 
@@ -122,7 +121,9 @@ class HomeViewModel : ViewModel() {
                     note = note
                 )
                 loadData()
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                AppState.showError(message = "거래 등록에 실패했습니다")
+            }
         }
     }
 

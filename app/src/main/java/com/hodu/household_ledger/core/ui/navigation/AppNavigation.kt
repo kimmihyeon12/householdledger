@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import com.hodu.household_ledger.core.common.AppState
 import com.hodu.household_ledger.core.data.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,6 +61,7 @@ fun AppNavigation() {
     // 토큰은 있지만 사용자 정보가 없으면 서버에서 가져오기
     LaunchedEffect(hasToken) {
         if (hasToken && UserManager.getNickname() == null) {
+            AppState.startLoading()
             try {
                 val user = withContext(Dispatchers.IO) { AuthRepository().getMe() }
                 val provider = when {
@@ -68,7 +70,10 @@ fun AppNavigation() {
                     else -> ""
                 }
                 UserManager.save(user.id, user.nickname, user.profileImageUrl, provider)
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                AppState.showError(message = "사용자 정보를 불러오지 못했습니다")
+            }
+            AppState.stopLoading()
         }
     }
 
@@ -159,7 +164,10 @@ fun AppNavigation() {
                         coroutineScope.launch {
                             try {
                                 withContext(Dispatchers.IO) { AuthRepository().deleteAccount() }
-                            } catch (_: Exception) { }
+                            } catch (e: Exception) {
+                                AppState.showError(message = "계정 삭제에 실패했습니다")
+                                return@launch
+                            }
                             TokenManager.clearToken()
                             UserManager.clear()
                             ConsentManager.clear()
