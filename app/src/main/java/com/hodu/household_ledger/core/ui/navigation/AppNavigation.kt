@@ -77,6 +77,16 @@ fun AppNavigation() {
         }
     }
 
+    // 401 응답 시 강제 로그아웃 → 로그인 화면 이동
+    LaunchedEffect(Unit) {
+        AppState.forceLogoutEvent.collect {
+            UserManager.clear()
+            navController.navigate(Routes.LOGIN) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
+
     val showBottomBar = currentRoute in listOf(
         Routes.HOME, Routes.CALENDAR, Routes.INBOX, Routes.STATS, Routes.SETTINGS
     )

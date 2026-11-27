@@ -1,5 +1,6 @@
 package com.hodu.household_ledger.core.network
 
+import com.hodu.household_ledger.core.common.AppState
 import com.hodu.household_ledger.core.data.local.TokenManager
 import com.hodu.household_ledger.core.network.api.*
 import okhttp3.Interceptor
@@ -22,7 +23,12 @@ object ApiClient {
         } else {
             original
         }
-        chain.proceed(request)
+        val response = chain.proceed(request)
+        if (response.code == 401 && token != null) {
+            TokenManager.clearToken()
+            AppState.forceLogout()
+        }
+        response
     }
 
     private val okHttpClient: OkHttpClient by lazy {

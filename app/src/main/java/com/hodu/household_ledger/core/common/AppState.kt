@@ -16,6 +16,13 @@ object AppState {
     private val _errorEvent = MutableSharedFlow<AppError>(extraBufferCapacity = 10)
     val errorEvent = _errorEvent.asSharedFlow()
 
+    private val _forceLogoutEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val forceLogoutEvent = _forceLogoutEvent.asSharedFlow()
+
+    fun forceLogout() {
+        _forceLogoutEvent.tryEmit(Unit)
+    }
+
     private val _loadingCount = MutableStateFlow(0)
 
     /** 0보다 크면 로딩 중 */
